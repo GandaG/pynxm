@@ -1,0 +1,27 @@
+dist: xenial
+
+language: python
+
+python:
+  - 3.6
+  - 3.7
+  - 3.7-dev
+
+jobs:
+  include:
+    - stage: deploy
+      install: pip install flit
+      script: skip
+      if: tag IS present
+      deploy:
+        provider: script
+        script: flit publish
+        on:
+          tags: true
+
+install:
+  - pip install -U pip
+  - pip install tox
+
+script:
+  - tox -e check,py
