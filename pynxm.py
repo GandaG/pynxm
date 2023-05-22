@@ -65,6 +65,7 @@ class Nexus(object):
                 "content-type": "application/json",
             }
         )
+        self.nexus_headers = None
 
     @classmethod
     def sso(cls, app_slug, sso_token, sso_id=None):
@@ -103,6 +104,7 @@ class Nexus(object):
             timeout=30,
         )
         status_code = response.status_code
+        self.nexus_headers = {k: v for k, v in response.headers.items() if "X-" in k}
         if status_code not in (200, 201):
             if status_code == 429:
                 raise LimitReachedError(
