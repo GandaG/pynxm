@@ -111,6 +111,8 @@ class Nexus(object):
                     "You have reached your request limit. "
                     "Please wait one hour before trying again."
                 )
+            elif status_code in (503, 504):
+                raise RequestError("Status Code {} - {}".format(status_code, response.reason))
             else:
                 try:
                     msg = response.json()["message"]
