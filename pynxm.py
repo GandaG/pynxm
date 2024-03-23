@@ -65,7 +65,7 @@ class Nexus(object):
                 "content-type": "application/json",
             }
         )
-        self.nexus_headers = None
+        self.nexus_headers: dict = {}
 
     @classmethod
     def sso(cls, app_slug, sso_token, sso_id=None):
