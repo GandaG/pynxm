@@ -65,6 +65,7 @@ class Nexus(object):
                 "content-type": "application/json",
             }
         )
+        self.nexus_headers: dict = {}
 
     @classmethod
     def sso(cls, app_slug, sso_token, sso_id=None):
@@ -103,12 +104,15 @@ class Nexus(object):
             timeout=30,
         )
         status_code = response.status_code
+        self.nexus_headers = {k.lower(): v for k, v in response.headers.items() if k.lower().startswith("x-")}
         if status_code not in (200, 201):
             if status_code == 429:
                 raise LimitReachedError(
                     "You have reached your request limit. "
                     "Please wait one hour before trying again."
                 )
+            elif status_code in (503, 504):
+                raise RequestError("Status Code {} - {}".format(status_code, response.reason))
             else:
                 try:
                     msg = response.json()["message"]
